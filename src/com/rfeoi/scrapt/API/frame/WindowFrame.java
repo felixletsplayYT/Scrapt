@@ -33,7 +33,7 @@ public class WindowFrame {
         new Thread(tick).start();
     }
 
-    private void setListener(){
+    private void setListener() {
         this.keyListener = new KeyListener() {
             @Override
             public void keyTyped(KeyEvent keyEvent) {
@@ -91,6 +91,7 @@ public class WindowFrame {
         };
         frame.addMouseMotionListener(mouseMotionListener);
     }
+
     private Runnable tick = () -> {
         while(true){
             refresh();
@@ -120,22 +121,32 @@ public class WindowFrame {
         backgroundImage = ImageIO.read(file);
     }
 
-    public int getMouseX(){
-        return (int) frame.getMousePosition().getX();
+    public int getMouseX() {
+        try {
+            return (int) frame.getMousePosition().getX();
+        } catch (NullPointerException ignored) {
+
+        }
+        return 0;
     }
 
-    public int getMouseY(){
-        return (int) frame.getMousePosition().getY();
+    public int getMouseY() {
+        try {
+            return (int) frame.getMousePosition().getY();
+        } catch (NullPointerException ingnored) {
+        }
+        return 0;
     }
-    public void stopAtWall(String spiritname){
-        if (spirits.get(spiritname).getLocationX() <= 0){
+
+    public void stopAtWall(String spiritname) {
+        if (spirits.get(spiritname).getLocationX() <= 0) {
             spirits.get(spiritname).setLocationX(0);
-        }else if(spirits.get(spiritname).getLocationX() > (frame.getWidth() - spirits.get(spiritname).getWidth())){
+        } else if (spirits.get(spiritname).getLocationX() > (frame.getWidth() - spirits.get(spiritname).getWidth())) {
             spirits.get(spiritname).setLocationX(frame.getWidth() - spirits.get(spiritname).getWidth());
         }
-        if(spirits.get(spiritname).getLocationY() < spirits.get(spiritname).getHeight()/2){
-            spirits.get(spiritname).setLocationY(spirits.get(spiritname).getHeight()/2);
-        }else if(spirits.get(spiritname).getLocationY() > frame.getHeight() - spirits.get(spiritname).getHeight()){
+        if (spirits.get(spiritname).getLocationY() < spirits.get(spiritname).getHeight() / 2) {
+            spirits.get(spiritname).setLocationY(spirits.get(spiritname).getHeight() / 2);
+        } else if (spirits.get(spiritname).getLocationY() > frame.getHeight() - spirits.get(spiritname).getHeight()) {
             spirits.get(spiritname).setLocationY(frame.getHeight() - spirits.get(spiritname).getHeight());
         }
     }
@@ -143,12 +154,13 @@ public class WindowFrame {
     private void refresh() {
         new Thread(refreshRunnable).start();
     }
-    private Runnable refreshRunnable = () ->{
+
+    private Runnable refreshRunnable = () -> {
         frame.getGraphics().clearRect(0, 0, (int) frame.getSize().getWidth(), (int) frame.getSize().getHeight());
-        if (backgroundImage != null){
+        if (backgroundImage != null) {
             frame.getGraphics().drawImage(backgroundImage, 0, 0, frame.getWidth(), frame.getHeight(), null);
         }
-        if (!spirits.isEmpty()){
+        if (!spirits.isEmpty()) {
             for (Spirit spirit : spirits.values()) {
                 frame.getGraphics().drawImage(spirit.getUsedImage(), spirit.getLocationX(), spirit.getLocationY(), spirit.getWidth(), spirit.getHeight(), null);
             }
