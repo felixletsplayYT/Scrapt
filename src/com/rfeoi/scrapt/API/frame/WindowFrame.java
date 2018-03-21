@@ -104,11 +104,11 @@ public class WindowFrame {
 
     //METHODS (for user)
 
-    //TODO fix. Do not work
-    public boolean touches(String spiritname, String spiritname1){
-        for(int x=0; x<=10; x++){
-            for(int y=0; y>=10; y++){
-                if((spirits.get(spiritname).getLocationX() + x) == spirits.get(spiritname1).getLocationX() && (spirits.get(spiritname).getLocationY() + y) == spirits.get(spiritname1).getLocationY()){
+    //TODO fix. Does not work
+    public boolean touches(String firstSpirit, String secondSpirit){
+        for(int x=0-spirits.get(firstSpirit).getWidth()/2; x<=spirits.get(firstSpirit).getWidth()/2; x++){
+            for(int y= 0-spirits.get(firstSpirit).getHeight()/2; y<=spirits.get(firstSpirit).getHeight()/2; y++){
+                if((spirits.get(firstSpirit).getLocationX() + x) == spirits.get(secondSpirit).getLocationX() && (spirits.get(firstSpirit).getLocationY() + y) == spirits.get(secondSpirit).getLocationY()){
                     return true;
                 }
             }
