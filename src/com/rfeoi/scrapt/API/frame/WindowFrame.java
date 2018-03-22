@@ -105,7 +105,6 @@ public class WindowFrame {
 
     //METHODS (for user)
 
-    //TODO fix. Does not work
     public boolean touches(String firstSpirit, String secondSpirit){
         for(int x=0-spirits.get(firstSpirit).getWidth()/2; x<=spirits.get(firstSpirit).getWidth()/2; x++){
             for(int y= 0-spirits.get(firstSpirit).getHeight()/2; y<=spirits.get(firstSpirit).getHeight()/2; y++){
@@ -162,7 +161,9 @@ public class WindowFrame {
         }
         if (!spirits.isEmpty()) {
             for (Spirit spirit : spirits.values()) {
-                frame.getGraphics().drawImage(spirit.getUsedImage(), spirit.getLocationX(), spirit.getLocationY(), spirit.getWidth(), spirit.getHeight(), null);
+                if (spirit.isVisible()){
+                    frame.getGraphics().drawImage(spirit.getUsedImage(), spirit.getLocationX(), spirit.getLocationY(), spirit.getWidth(), spirit.getHeight(), null);
+                }
             }
         }
     };

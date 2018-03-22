@@ -35,7 +35,6 @@ public class Test {
     private static void moved(){
         if (frame.touches("player", "fish")){
             frame.spirits.get("fish").hide();
-            System.out.println(frame.spirits.get("fish").isVisible());
         }
     }
     private static Listener listener = new Listener() {
@@ -46,10 +45,9 @@ public class Test {
 
         @Override
         public void mouseMoved(MouseEvent mouseEvent) {
-            // Exception when mouse is out of frame, must be fixed
-            //frame.spirits.get("player").setLocationX(frame.getMouseX());
-            //frame.stopAtWall("player");
-            //moved();
+            frame.spirits.get("player").setLocationX(frame.getMouseX());
+            frame.stopAtWall("player");
+            moved();
         }
 
         @Override
@@ -92,16 +90,6 @@ public class Test {
                     break;
                 case KeyEvent.VK_UP:
                     frame.spirits.get("player").changeYby(-10);
-                    frame.stopAtWall("player");
-                    moved();
-                    break;
-                case KeyEvent.VK_RIGHT:
-                    frame.spirits.get("player").changeXby(10);
-                    frame.stopAtWall("player");
-                    moved();
-                    break;
-                case KeyEvent.VK_LEFT:
-                    frame.spirits.get("player").changeXby(-10);
                     frame.stopAtWall("player");
                     moved();
                     break;
