@@ -6,10 +6,12 @@ import java.util.ArrayList;
 public class Interpreter {
     private ArrayList<String> lines;
     private Executer executer;
+    private String spiritname;
 
-    public Interpreter(File file, Executer executer) {
+    public Interpreter(File file, Executer executer, String spiritName) {
         lines = new ArrayList<>();
         this.executer = executer;
+        this.spiritname = spiritName;
     }
 
     public void produce() {
@@ -25,7 +27,7 @@ public class Interpreter {
                         String object = s.split("->")[0];
                         String command = s.split("->")[1].split("\\(")[0];
                         String args = s.split("\\(")[1].replace(")", "");
-                        executer.execute(object, command, args);
+                        executer.execute(object, command, args, spiritname);
                     } else {
                         if (s.contains("(")) {
                             String command = s.split("\\(")[0];
@@ -66,6 +68,6 @@ public class Interpreter {
         String side2_object = cmd.split("->")[0];
         String side2_command = cmd.split("->")[1].split("\\(")[0];
         String side2_args = cmd.split("\\(")[1].replace(")", "");
-        return executer.getValue(side2_object, side2_command, side2_args);
+        return executer.getValue(side2_object, side2_command, side2_args, spiritname);
     }
 }
