@@ -1,6 +1,6 @@
 package com.rfeoi.scrapt.script.interpreter;
 
-import java.io.File;
+import java.io.*;
 import java.util.ArrayList;
 
 public class Interpreter {
@@ -8,10 +8,16 @@ public class Interpreter {
     private Executer executer;
     private String spiritname;
 
-    public Interpreter(File file, Executer executer, String spiritName) {
+    public Interpreter(File file, Executer executer, String spiritName) throws IOException {
         lines = new ArrayList<>();
         this.executer = executer;
         this.spiritname = spiritName;
+        BufferedReader reader = new BufferedReader(new FileReader(file));
+        String line;
+        while ((line = reader.readLine()) != null){
+            lines.add(line);
+        }
+        reader.close();
     }
 
     public void produce() {
