@@ -13,7 +13,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 
-public class Loader implements Executer, Listener{
+public class Loader implements Executer, Listener {
+
     private WindowFrame windowFrame;
     private File folder;
     private HashMap<String, ArrayList<Interpreter>> keyEvents;
@@ -31,62 +32,62 @@ public class Loader implements Executer, Listener{
         starter = new ArrayList<>();
         blocks = new HashMap<>();
         privVars = new HashMap<>();
-        //TODO size dinamic
         windowFrame = new WindowFrame(new Dimension(1000, 1000), folder.getName(), this);
         loadClasses();
         startRoutine();
     }
+
     private void loadClasses() throws IOException {
         if (!folder.isDirectory()) return;
-        for (File file : folder.listFiles()){
-            if (file.isDirectory()){
-                if (file.getName().equalsIgnoreCase("background")){
+        for (File file : folder.listFiles()) {
+            if (file.isDirectory()) {
+                if (file.getName().equalsIgnoreCase("background")) {
                     //TODO add Background listener
                     File file1 = file.listFiles()[0];
                     if (file1.isDirectory()) return;
                     windowFrame.setBackgroundImage(file1);
-                }else{
+                } else {
                     ArrayList<File> costumes = new ArrayList<>();
-                    for (File file1 : file.listFiles()){
-                        if (file1.isDirectory()){
-                            if (file1.getName().equalsIgnoreCase("costumes")){
+                    for (File file1 : file.listFiles()) {
+                        if (file1.isDirectory()) {
+                            if (file1.getName().equalsIgnoreCase("costumes")) {
                                 costumes.addAll(Arrays.asList(file1.listFiles()));
                             }
-                        }else{
-                            if (file1.getName().startsWith("keylistener_")){
+                        } else {
+                            if (file1.getName().startsWith("keylistener_")) {
                                 String key = file1.getName().replace("keylistener_", "");
                                 addListener(key, new Interpreter(file1, this, file.getName()));
-                            }else if (file1.getName().equalsIgnoreCase("start")){
+                            } else if (file1.getName().equalsIgnoreCase("start")) {
                                 starter.add(new Interpreter(file1, this, file.getName()));
-                            }else if (file1.getName().equalsIgnoreCase("mouselistener")){
+                            } else if (file1.getName().equalsIgnoreCase("mouselistener")) {
                                 mouseListener.add(new Interpreter(file1, this, file.getName()));
-                            }
-                            else if (file1.getName().startsWith("block_")){
+                            } else if (file1.getName().startsWith("block_")) {
                                 String blockname = file1.getName().replace("block_", "");
-                                if (blocks.get(file.getName()) == null) blocks.put(file.getName(), new HashMap<>());
+                                blocks.computeIfAbsent(file.getName(), k -> new HashMap<>());
                                 blocks.get(file.getName()).put(blockname, new Interpreter(file1, this, file.getName()));
                             }
                         }
                     }
-                    //TOD widt, height non static
-                    windowFrame.spirits.put(file.getName(), new Spirit(costumes.get(0), 200, 60));
-                    for (File costume : costumes){
+                    windowFrame.spirits.put(file.getName(), new Spirit(costumes.get(0), 100, 10));
+                    for (File costume : costumes) {
                         windowFrame.spirits.get(file.getName()).addCostumeImage(costume);
                     }
                 }
             }
         }
     }
-    private void addListener(String key, Interpreter interpreter){
-        if (keyEvents.get(key) == null) keyEvents.put(key, new ArrayList<>());
+
+    private void addListener(String key, Interpreter interpreter) {
+        keyEvents.computeIfAbsent(key, k -> new ArrayList<>());
         keyEvents.get(key).add(interpreter);
     }
+
     @Override
     public void execute(String spiritname, String command, String value, String executedSpirit) {
         String spirit = null;
         if (spiritname.equalsIgnoreCase("this")) spirit = executedSpirit;
         else spirit = spiritname;
-        switch (command){
+        switch (command) {
             case "setX":
                 if (value == null || value.isEmpty()) break;
                 windowFrame.spirits.get(spirit).setLocationX(Integer.parseInt(value));
@@ -108,37 +109,57 @@ public class Loader implements Executer, Listener{
             case "changeCostume":
                 if (value == null || value.isEmpty()) break;
                 windowFrame.spirits.get(spirit).setCostume(Integer.parseInt(value));
+                break;
             case "stopAtWall":
                 windowFrame.stopAtWall(spirit);
+                break;
+            case "setWidth":
+                if (value == null || value.isEmpty()) break;
+                windowFrame.spirits.get(spirit).setWidth(Integer.parseInt(value));
+                break;
+            case "setHeight":
+                if (value == null || value.isEmpty()) break;
+                windowFrame.spirits.get(spirit).setHeight(Integer.parseInt(value));
+                break;
+            case "debug":
+                if (value == null || value.isEmpty()) break;
+                System.out.println("Debug message by Scrapt Language (Spirit: " + spirit + "): " + value);
+                break;
             default:
-                if (blocks.get(spirit).get(command) != null){
-                    start(blocks.get(spirit).get(command));
+                if (blocks.get(spirit) != null) {
+                    if (blocks.get(spirit).get(command) != null) {
+                        start(blocks.get(spirit).get(command));
+                    }
                 }
                 break;
         }
     }
 
-    private void start(Interpreter interpreter){
+    private void start(Interpreter interpreter) {
         new Thread(() -> interpreter.produce()).start();
     }
+
     @Override
     public String getValue(String spiritname, String command, String value, String executedSpirit) {
         String spirit = null;
-        if (spiritname.equalsIgnoreCase("this")) spiritname = executedSpirit;
+        if (spiritname.equalsIgnoreCase("this")) spirit = executedSpirit;
         else spirit = spiritname;
-        if (spirit.equalsIgnoreCase("mouse")){
-            switch (command){
+        if (spirit.equalsIgnoreCase("mouse")) {
+            switch (command) {
                 case "getX":
                     return "" + windowFrame.getMouseX();
                 case "getY":
                     return "" + windowFrame.getMouseY();
             }
         }
-        switch (command){
+        switch (command) {
             case "getX":
                 return "" + windowFrame.spirits.get(spirit).getLocationX();
             case "getY":
                 return "" + windowFrame.spirits.get(spirit).getLocationY();
+            case "touches":
+                if (value == null || value.isEmpty()) return null;
+                return windowFrame.touches(spirit, value) + "";
         }
         return null;
     }
@@ -164,8 +185,9 @@ public class Loader implements Executer, Listener{
         privVars.computeIfAbsent(spirit, k -> new HashMap<>());
         privVars.get(spirit).put(name, value);
     }
-    private void startRoutine(){
-        for (int i = 0 ; i< starter.size(); i++){
+
+    private void startRoutine() {
+        for (int i = 0; i < starter.size(); i++) {
             start(starter.get(i));
         }
     }
@@ -177,8 +199,8 @@ public class Loader implements Executer, Listener{
 
     @Override
     public void mouseMoved(MouseEvent mouseEvent) {
-        if (mouseListener.size() > 0){
-            for (int i = 0; i < mouseListener.size(); i++){
+        if (mouseListener.size() > 0) {
+            for (int i = 0; i < mouseListener.size(); i++) {
                 start(mouseListener.get(i));
             }
         }
@@ -217,7 +239,7 @@ public class Loader implements Executer, Listener{
     @Override
     public void keyPressed(KeyEvent keyEvent) {
         if (keyEvents.get(keyEvent.getKeyCode() + "") == null) return;
-        for (int i = 0; i < keyEvents.get(keyEvent.getKeyCode() + "").size(); i++){
+        for (int i = 0; i < keyEvents.get(keyEvent.getKeyCode() + "").size(); i++) {
             start(keyEvents.get(keyEvent.getKeyCode() + "").get(i));
         }
     }

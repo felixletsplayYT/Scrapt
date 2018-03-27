@@ -1,11 +1,10 @@
 package com.rfeoi.scrapt.script.interpreter;
 
-import javax.sound.midi.SysexMessage;
-import java.awt.event.KeyEvent;
 import java.io.*;
 import java.util.ArrayList;
 
 public class Interpreter {
+    private final String classSymbol = ";";
     private ArrayList<String> lines;
     private Executer executer;
     private String spiritname;
@@ -16,7 +15,7 @@ public class Interpreter {
         this.spiritname = spiritName;
         BufferedReader reader = new BufferedReader(new FileReader(file));
         String line;
-        while ((line = reader.readLine()) != null){
+        while ((line = reader.readLine()) != null) {
             lines.add(line);
         }
         reader.close();
@@ -31,17 +30,17 @@ public class Interpreter {
                 ifTrue = false;
             } else {
                 if (!(inIf && !ifTrue)) {
-                    if (s.contains("->")) {
-                        String object = s.split("->")[0];
-                        String command = s.split("->")[1].split("\\(")[0];
-                        String args = s.replace(object + "->" + command + "(", "");
-                        args = args.replaceFirst("\\)", "");
-                        if (args.contains("->")) args = getValue(args);
+                    if (!s.contains("if") && !s.contains("wait")) {
+                        String object = s.split(classSymbol)[0];
+                        String command = s.split(classSymbol)[1].split("\\(")[0];
+                        String args = s.replace(object + classSymbol + command + "(", "");
+                        args = args.substring(0, args.length() - 1);
+                        if (args.contains(classSymbol)) args = getValue(args);
                         executer.execute(object, command, args, spiritname);
                     } else {
                         if (s.contains("(")) {
                             String command = s.split("\\(")[0];
-                            String args = s.split("\\(")[1].replace(")", "");
+                            String args = getSecondbyChar(s, "(".toCharArray()[0]).replace("){", "");
                             switch (command) {
                                 case "wait":
                                     try {
@@ -52,19 +51,39 @@ public class Interpreter {
                                     break;
                                 case "if":
                                     inIf = true;
-                                    //TODO more testing options
                                     if (args.contains("=")) {
                                         String side1 = args.split("=")[0];
                                         String side2 = args.split("=")[1];
-                                        if (side1.contains("->")){
+                                        if (side1.contains(classSymbol)) {
                                             side1 = getValue(side1);
                                         }
-                                        if (side2.contains("->")){
+                                        if (side2.contains(classSymbol)) {
                                             side2 = getValue(side2);
                                         }
                                         if (side1.equalsIgnoreCase(side2)) ifTrue = true;
                                     }
-                                    break;
+                                    if (args.contains(">")) {
+                                        String side1 = args.split(">")[0];
+                                        String side2 = args.split(">")[1];
+                                        if (side1.contains(classSymbol)) {
+                                            side1 = getValue(side1);
+                                        }
+                                        if (side2.contains(classSymbol)) {
+                                            side2 = getValue(side2);
+                                        }
+                                        if (Integer.parseInt(side1) > Integer.parseInt(side2)) ifTrue = true;
+                                    }
+                                    if (args.contains("<")) {
+                                        String side1 = args.split("<")[0];
+                                        String side2 = args.split("<")[1];
+                                        if (side1.contains(classSymbol)) {
+                                            side1 = getValue(side1);
+                                        }
+                                        if (side2.contains(classSymbol)) {
+                                            side2 = getValue(side2);
+                                        }
+                                        if (Integer.parseInt(side1) < Integer.parseInt(side2)) ifTrue = true;
+                                    }
                             }
 
                         }
@@ -73,10 +92,72 @@ public class Interpreter {
             }
         }
     }
-    private String getValue(String cmd){
-        String object = cmd.split("->")[0];
-        String command = cmd.split("->")[1].split("\\(")[0];
-        String args = cmd.split("\\(")[1].replace(")", "");
-        return executer.getValue(object, command, args, spiritname);
+
+    private String getValue(String cmd) {
+        String result;
+        if (cmd.contains("-")) {
+            String[] sides = cmd.split("-");
+            int side0;
+            int side1;
+            if (sides[0].contains(classSymbol)) side0 = Integer.parseInt(getValue(sides[0]));
+            else side0 = Integer.parseInt(sides[0]);
+            if (sides[1].contains(classSymbol)) side1 = Integer.parseInt(getValue(sides[1]));
+            else side1 = Integer.parseInt(sides[1]);
+            int resultInt = side0 - side1;
+            result = resultInt + "";
+        } else if (cmd.contains("+")) {
+            String[] sides = cmd.split("\\+");
+            int side0;
+            int side1;
+            if (sides[0].contains(classSymbol)) side0 = Integer.parseInt(getValue(sides[0]));
+            else side0 = Integer.parseInt(sides[0]);
+            if (sides[1].contains(classSymbol)) side1 = Integer.parseInt(getValue(sides[1]));
+            else side1 = Integer.parseInt(sides[1]);
+            int resultInt = side0 + side1;
+            result = resultInt + "";
+        } else if (cmd.contains("*")) {
+            String[] sides = cmd.split("\\*");
+            int side0;
+            int side1;
+            if (sides[0].contains(classSymbol)) side0 = Integer.parseInt(getValue(sides[0]));
+            else side0 = Integer.parseInt(sides[0]);
+            if (sides[1].contains(classSymbol)) side1 = Integer.parseInt(getValue(sides[1]));
+            else side1 = Integer.parseInt(sides[1]);
+            int resultInt = side0 * side1;
+            result = resultInt + "";
+        } else if (cmd.contains("/")) {
+            String[] sides = cmd.split("/");
+            int side0;
+            int side1;
+            if (sides[0].contains(classSymbol)) side0 = Integer.parseInt(getValue(sides[0]));
+            else side0 = Integer.parseInt(sides[0]);
+            if (sides[1].contains(classSymbol)) side1 = Integer.parseInt(getValue(sides[1]));
+            else side1 = Integer.parseInt(sides[1]);
+            int resultInt = side0 / side1;
+            result = resultInt + "";
+        } else {
+            String object = cmd.split(classSymbol)[0];
+            String command = cmd.split(classSymbol)[1].split("\\(")[0];
+            String args = cmd.split("\\(")[1].replace(")", "");
+            result = executer.getValue(object, command, args, spiritname);
+        }
+
+        return result;
     }
+
+    private String getSecondbyChar(String string, char ch) {
+        String s = "";
+        boolean add = false;
+        for (char c : string.toCharArray()) {
+            if (add) {
+                s += c;
+            } else {
+                if (c == ch) {
+                    add = true;
+                }
+            }
+        }
+        return s;
+    }
+
 }
