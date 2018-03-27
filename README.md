@@ -18,6 +18,6 @@ https://github.com/rfeoi/Scrapt/issues
 You can just fork the Project, do your things and create a Pull Request.
 We fork this, if it is well written, compatible with the project and usefull.
 ## I have a question!
-You can just write me an email.(english or german)
-felixletsplay@outlook.de
-Or just create an issue.
+You can just write me an email: (english or german)
+felixletsplay@outlook.de.
+Or you can just create an issue.
