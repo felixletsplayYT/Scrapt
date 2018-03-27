@@ -1,5 +1,7 @@
 package com.rfeoi.scrapt.script.interpreter;
 
+import javax.sound.midi.SysexMessage;
+import java.awt.event.KeyEvent;
 import java.io.*;
 import java.util.ArrayList;
 
@@ -32,13 +34,14 @@ public class Interpreter {
                     if (s.contains("->")) {
                         String object = s.split("->")[0];
                         String command = s.split("->")[1].split("\\(")[0];
-                        String args = s.split("\\(")[1].replace(")", "");
+                        String args = s.replace(object + "->" + command + "(", "");
+                        args = args.replaceFirst("\\)", "");
+                        if (args.contains("->")) args = getValue(args);
                         executer.execute(object, command, args, spiritname);
                     } else {
                         if (s.contains("(")) {
                             String command = s.split("\\(")[0];
                             String args = s.split("\\(")[1].replace(")", "");
-                            //TODO IF!
                             switch (command) {
                                 case "wait":
                                     try {
@@ -71,9 +74,9 @@ public class Interpreter {
         }
     }
     private String getValue(String cmd){
-        String side2_object = cmd.split("->")[0];
-        String side2_command = cmd.split("->")[1].split("\\(")[0];
-        String side2_args = cmd.split("\\(")[1].replace(")", "");
-        return executer.getValue(side2_object, side2_command, side2_args, spiritname);
+        String object = cmd.split("->")[0];
+        String command = cmd.split("->")[1].split("\\(")[0];
+        String args = cmd.split("\\(")[1].replace(")", "");
+        return executer.getValue(object, command, args, spiritname);
     }
 }

@@ -21,11 +21,13 @@ public class Loader implements Executer, Listener{
     private ArrayList<Interpreter> starter;
     private HashMap<String, HashMap<String, Interpreter>> blocks;
     private HashMap<String, HashMap<String, String>> privVars;
+    private ArrayList<Interpreter> mouseListener;
 
     public Loader(File folder) throws IOException {
         this.folder = folder;
         keyEvents = new HashMap<>();
         globVariables = new HashMap<>();
+        mouseListener = new ArrayList<>();
         starter = new ArrayList<>();
         blocks = new HashMap<>();
         privVars = new HashMap<>();
@@ -40,6 +42,9 @@ public class Loader implements Executer, Listener{
             if (file.isDirectory()){
                 if (file.getName().equalsIgnoreCase("background")){
                     //TODO add Background listener
+                    File file1 = file.listFiles()[0];
+                    if (file1.isDirectory()) return;
+                    windowFrame.setBackgroundImage(file1);
                 }else{
                     ArrayList<File> costumes = new ArrayList<>();
                     for (File file1 : file.listFiles()){
@@ -49,11 +54,14 @@ public class Loader implements Executer, Listener{
                             }
                         }else{
                             if (file1.getName().startsWith("keylistener_")){
-                                String key = file.getName().split("keylistener_")[1];
+                                String key = file1.getName().replace("keylistener_", "");
                                 addListener(key, new Interpreter(file1, this, file.getName()));
                             }else if (file1.getName().equalsIgnoreCase("start")){
                                 starter.add(new Interpreter(file1, this, file.getName()));
-                            }else if (file1.getName().startsWith("block_")){
+                            }else if (file1.getName().equalsIgnoreCase("mouselistener")){
+                                mouseListener.add(new Interpreter(file1, this, file.getName()));
+                            }
+                            else if (file1.getName().startsWith("block_")){
                                 String blockname = file1.getName().replace("block_", "");
                                 if (blocks.get(file.getName()) == null) blocks.put(file.getName(), new HashMap<>());
                                 blocks.get(file.getName()).put(blockname, new Interpreter(file1, this, file.getName()));
@@ -76,7 +84,7 @@ public class Loader implements Executer, Listener{
     @Override
     public void execute(String spiritname, String command, String value, String executedSpirit) {
         String spirit = null;
-        if (spiritname.equalsIgnoreCase("this")) spiritname = executedSpirit;
+        if (spiritname.equalsIgnoreCase("this")) spirit = executedSpirit;
         else spirit = spiritname;
         switch (command){
             case "setX":
@@ -100,6 +108,8 @@ public class Loader implements Executer, Listener{
             case "changeCostume":
                 if (value == null || value.isEmpty()) break;
                 windowFrame.spirits.get(spirit).setCostume(Integer.parseInt(value));
+            case "stopAtWall":
+                windowFrame.stopAtWall(spirit);
             default:
                 if (blocks.get(spirit).get(command) != null){
                     start(blocks.get(spirit).get(command));
@@ -151,7 +161,7 @@ public class Loader implements Executer, Listener{
 
     @Override
     public void setPrivVar(String name, String spirit, String value) {
-        if (privVars.get(spirit) == null)privVars.put(spirit, new HashMap<>());
+        privVars.computeIfAbsent(spirit, k -> new HashMap<>());
         privVars.get(spirit).put(name, value);
     }
     private void startRoutine(){
@@ -167,7 +177,11 @@ public class Loader implements Executer, Listener{
 
     @Override
     public void mouseMoved(MouseEvent mouseEvent) {
-
+        if (mouseListener.size() > 0){
+            for (int i = 0; i < mouseListener.size(); i++){
+                start(mouseListener.get(i));
+            }
+        }
     }
 
     @Override
@@ -202,8 +216,9 @@ public class Loader implements Executer, Listener{
 
     @Override
     public void keyPressed(KeyEvent keyEvent) {
-        for (int i = 0; i < keyEvents.get(keyEvent.getKeyCode()).size(); i++){
-            start(keyEvents.get(keyEvent.getKeyCode()).get(i));
+        if (keyEvents.get(keyEvent.getKeyCode() + "") == null) return;
+        for (int i = 0; i < keyEvents.get(keyEvent.getKeyCode() + "").size(); i++){
+            start(keyEvents.get(keyEvent.getKeyCode() + "").get(i));
         }
     }
 
