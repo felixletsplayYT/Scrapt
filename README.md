@@ -12,12 +12,12 @@ An example can be found here.
 ## How can I use the script language?
 In the Wiki you can find the documentation of the script language.
 An example will be there soon.
-##Where can I submit an Issue/Idea
+## Where can I submit an Issue/Idea
 https://github.com/rfeoi/Scrapt/issues
-##Can I contribute to this Project.
+## Can I contribute to this Project.
 You can just fork the Project, do your things and create a Pull Request.
 We fork this, if it is well written, compatible with the project and usefull.
-##I have a question!
+## I have a question!
 You can just write me an email.(english or german)
 felixletsplay@outlook.de
 Or just create an issue.
