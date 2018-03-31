@@ -105,6 +105,12 @@ public class WindowFrame {
 
     //METHODS (for user)
 
+    public void setTitle(String name){
+        frame.setTitle(name);
+    }
+    public String getTitle(){
+        return frame.getTitle();
+    }
     public boolean touches(String firstSpirit, String secondSpirit){
         for(int x=0-spirits.get(firstSpirit).getWidth()/2; x<=spirits.get(firstSpirit).getWidth()/2; x++){
             for(int y= 0-spirits.get(firstSpirit).getHeight()/2; y<=spirits.get(firstSpirit).getHeight()/2; y++){

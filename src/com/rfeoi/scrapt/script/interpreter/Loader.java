@@ -15,6 +15,7 @@ import java.util.HashMap;
 
 public class Loader implements Executer, Listener {
 
+    private String name = "";
     private WindowFrame windowFrame;
     private File folder;
     private HashMap<String, ArrayList<Interpreter>> keyEvents;
@@ -23,20 +24,33 @@ public class Loader implements Executer, Listener {
     private HashMap<String, HashMap<String, Interpreter>> blocks;
     private HashMap<String, HashMap<String, String>> privVars;
     private ArrayList<Interpreter> mouseListener;
+    private ScraptFileParser parser;
 
-    public Loader(File folder) throws IOException {
-        this.folder = folder;
+    public Loader(File configFile) throws IOException {
+        parser = new ScraptFileParser(configFile);
+        this.folder = configFile.getParentFile();
         keyEvents = new HashMap<>();
         globVariables = new HashMap<>();
         mouseListener = new ArrayList<>();
         starter = new ArrayList<>();
         blocks = new HashMap<>();
         privVars = new HashMap<>();
-        windowFrame = new WindowFrame(new Dimension(1000, 1000), folder.getName(), this);
+        loadConfigFile(configFile);
+        windowFrame = new WindowFrame(new Dimension(1000, 1000), name, this);
         loadClasses();
         startRoutine();
     }
-
+    private void loadConfigFile(File configFile){
+        if (parser.getValues().get("name") != null) {
+            name = parser.getValues().get("name");
+            if (!name.equals(configFile.getName().replace(".scrapt", ""))) {
+                System.err.println("Error: name attribute is not equals to file name");
+            }
+        } else {
+            System.err.println("name attribute missing");
+            System.exit(1);
+        }
+    }
     private void loadClasses() throws IOException {
         if (!folder.isDirectory()) return;
         for (File file : folder.listFiles()) {
@@ -74,6 +88,10 @@ public class Loader implements Executer, Listener {
                     }
                 }
             }
+        }
+        if (name.isEmpty()) {
+            System.err.println("No config File found");
+            System.exit(1);
         }
     }
 

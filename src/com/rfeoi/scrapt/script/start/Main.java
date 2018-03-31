@@ -14,6 +14,8 @@ public class Main {
             } catch (IOException e) {
                 e.printStackTrace();
             }
+        }else{
+            System.out.println("usage: scrapt.jar <path to config file>");
         }
     }
 }
