@@ -24,7 +24,7 @@ public class WindowFrame {
     public WindowFrame(Dimension size, String title, Listener listener) {
         spirits = new HashMap<>();
         frame = new JFrame(title);
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         frame.setVisible(true);
         frame.setSize(size);
         frame.repaint();
