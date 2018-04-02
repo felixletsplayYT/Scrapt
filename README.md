@@ -1,5 +1,5 @@
 # Scrapt
-<img src="https://travis-ci.org/rfeoi/Scrapt.svg?branch=master"></img>
+[![Build Status](https://travis-ci.org/rfeoi/Scrapt.svg?branch=master)](https://travis-ci.org/rfeoi/Scrapt)
 ## What is Scrapt?
 Scrapt is a tool for creating your own Minigames with and without Java. It is inspired by Scratch/Snap.
 ## How can I use Scrapt?
