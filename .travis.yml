@@ -6,8 +6,8 @@ jdk:
 script: mvn package
 deploy:
   on:
-    - tags: true
-    - jdk: oraclejdk8
+    tags: true
+    jdk: oraclejdk8
   before_deploy: "mv target/*.jar scrapt.jar"
   provider: releases
   api_key:
