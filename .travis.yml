@@ -13,6 +13,6 @@ deploy:
     file: "scrapt.jar"
     skip_cleanup: true
     on:
-      tags: true
-      jdk: oraclejdk8
-      branch: master
+      - tags: true
+      - jdk: oraclejdk8
+      - branch: master
