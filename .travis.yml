@@ -1,4 +1,5 @@
 language: java
+before_install: "rm *"
 jdk:
   - oraclejdk8
   - oraclejdk9
