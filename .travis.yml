@@ -1,6 +1,4 @@
 language: java
-before_install:
-  - "rm target/*.jar"
 jdk:
   - oraclejdk8
   - oraclejdk9
