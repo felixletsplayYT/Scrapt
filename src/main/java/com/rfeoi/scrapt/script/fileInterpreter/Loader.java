@@ -1,8 +1,10 @@
-package com.rfeoi.scrapt.script.interpreter;
+package com.rfeoi.scrapt.script.fileInterpreter;
 
 import com.rfeoi.scrapt.API.Listener;
 import com.rfeoi.scrapt.API.frame.WindowFrame;
 import com.rfeoi.scrapt.API.objects.Spirit;
+import com.rfeoi.scrapt.script.interpreter.Executer;
+import com.rfeoi.scrapt.script.interpreter.Interpreter_OLD;
 
 import java.awt.*;
 import java.awt.event.KeyEvent;
@@ -18,12 +20,12 @@ public class Loader implements Executer, Listener {
     private String name = "";
     private WindowFrame windowFrame;
     private File folder;
-    private HashMap<String, ArrayList<Interpreter>> keyEvents;
+    private HashMap<String, ArrayList<Interpreter_OLD>> keyEvents;
     private HashMap<String, String> globVariables;
-    private ArrayList<Interpreter> starter;
-    private HashMap<String, HashMap<String, Interpreter>> blocks;
+    private ArrayList<Interpreter_OLD> starter;
+    private HashMap<String, HashMap<String, Interpreter_OLD>> blocks;
     private HashMap<String, HashMap<String, String>> privVars;
-    private ArrayList<Interpreter> mouseListener;
+    private ArrayList<Interpreter_OLD> mouseListener;
     private ScraptFileParser parser;
 
     public Loader(File configFile) throws IOException {
@@ -70,15 +72,15 @@ public class Loader implements Executer, Listener {
                         } else {
                             if (file1.getName().startsWith("keylistener_")) {
                                 String key = file1.getName().replace("keylistener_", "");
-                                addListener(key, new Interpreter(file1, this, file.getName()));
+                                addListener(key, new Interpreter_OLD(file1, this, file.getName()));
                             } else if (file1.getName().equalsIgnoreCase("start")) {
-                                starter.add(new Interpreter(file1, this, file.getName()));
+                                starter.add(new Interpreter_OLD(file1, this, file.getName()));
                             } else if (file1.getName().equalsIgnoreCase("mouselistener")) {
-                                mouseListener.add(new Interpreter(file1, this, file.getName()));
+                                mouseListener.add(new Interpreter_OLD(file1, this, file.getName()));
                             } else if (file1.getName().startsWith("block_")) {
                                 String blockname = file1.getName().replace("block_", "");
                                 blocks.computeIfAbsent(file.getName(), k -> new HashMap<>());
-                                blocks.get(file.getName()).put(blockname, new Interpreter(file1, this, file.getName()));
+                                blocks.get(file.getName()).put(blockname, new Interpreter_OLD(file1, this, file.getName()));
                             }
                         }
                     }
@@ -95,7 +97,7 @@ public class Loader implements Executer, Listener {
         }
     }
 
-    private void addListener(String key, Interpreter interpreter) {
+    private void addListener(String key, Interpreter_OLD interpreter) {
         keyEvents.computeIfAbsent(key, k -> new ArrayList<>());
         keyEvents.get(key).add(interpreter);
     }
@@ -153,7 +155,7 @@ public class Loader implements Executer, Listener {
         }
     }
 
-    private void start(Interpreter interpreter) {
+    private void start(Interpreter_OLD interpreter) {
         new Thread(() -> interpreter.produce()).start();
     }
 

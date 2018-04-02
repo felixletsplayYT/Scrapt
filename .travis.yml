@@ -2,4 +2,17 @@ language: java
 jdk:
   - oraclejdk8
   - oraclejdk9
+  - oraclejdk10
   - openjdk8
+script: mvn package
+deploy:
+  before_deploy: "mv target/*.jar scrapt.jar"
+  provider: releases
+  api_key:
+    secure: "TODO"
+    file: "scrapt.jar"
+    skip_cleanup: true
+    on:
+      tags: true
+      jdk: oraclejdk8
+      branch: master

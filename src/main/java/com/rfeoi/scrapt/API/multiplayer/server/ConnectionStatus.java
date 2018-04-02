@@ -4,8 +4,7 @@ public enum ConnectionStatus{
         DISCONNECTED,
         HANDSHAKE_VERSION,
         HANDSHAKE_USERNAME,
-        CONNECTED,
-        DISCONNECTING;
+        CONNECTED;
 
         int getID(){
             //TODO

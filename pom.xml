@@ -4,7 +4,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>de.rfeoi</groupId>
+    <groupId>com.rfeoi.scrapt</groupId>
     <artifactId>Scrapt</artifactId>
     <version>1.1</version>
     <build>
@@ -17,9 +17,22 @@
                     <target>1.8</target>
                 </configuration>
             </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <configuration>
+                    <archive>
+                        <manifest>
+                            <addClasspath>true</addClasspath>
+                            <mainClass>com.rfeoi.scrapt.script.start.Main</mainClass>
+                        </manifest>
+                    </archive>
+                </configuration>
+            </plugin>
         </plugins>
     </build>
     <packaging>jar</packaging>
+
 
     <name>Scrapt</name>
     <description>A Java Library for creating little 2D games.</description>

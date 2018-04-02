@@ -1,6 +1,6 @@
 package com.rfeoi.scrapt.script.start;
 
-import com.rfeoi.scrapt.script.interpreter.Loader;
+import com.rfeoi.scrapt.script.fileInterpreter.Loader;
 
 import java.io.File;
 import java.io.IOException;

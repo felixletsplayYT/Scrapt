@@ -1,4 +1,4 @@
-package com.rfeoi.scrapt.script.interpreter;
+package com.rfeoi.scrapt.script.fileInterpreter;
 
 import java.io.*;
 import java.util.HashMap;
