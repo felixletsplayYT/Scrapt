@@ -1,23 +1,23 @@
 package com.rfeoi.scrapt.script.interpreter;
 
-public class Interpreter {
-    private final String classSymbol = ";";
+public class Interpreter implements InterpreterChanger {
+    public static final String classSymbol = ";";
+    public static final String varSymbol = "$";
     /*
     0: If it is in If
     1: If if condition is true
      */
     private boolean[] var_if = {false, false};
+
     public Interpreter(){
 
     }
+
     public void interpret(String line){
+        if (line.startsWith("//")) return;
         if (defaultTests(line)) return;
         if(line.contains("(")){
-            if (line.split("\\(")[0].contains(";")) {
-                if (specialCommand(line)) return;
-            }else{
-               if (normalCommand(line)) return;
-            }
+
         }else{
             System.err.println("'(' missing");
         }
@@ -47,4 +47,13 @@ public class Interpreter {
         return false;
     }
 
+    @Override
+    public void setIf(boolean inIf, boolean ifTrue) {
+        var_if[0] = inIf;
+        var_if[1] = ifTrue;
+    }
+}
+
+interface InterpreterChanger {
+    void setIf(boolean inIf, boolean ifTrue);
 }

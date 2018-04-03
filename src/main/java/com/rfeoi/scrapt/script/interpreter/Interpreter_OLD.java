@@ -37,7 +37,8 @@ public class Interpreter_OLD {
                         String args = s.replace(object + classSymbol + command + "(", "");
                         args = args.substring(0, args.length() - 1);
                         if (args.contains(classSymbol)) args = getValue(args);
-                        executer.execute(object, command, args, spiritname);
+                        String[] args1 = {args};
+                        executer.execute(object, command, args1, spiritname);
                     } else {
                         if (s.contains("(")) {
                             String command = s.split("\\(")[0];
@@ -140,7 +141,8 @@ public class Interpreter_OLD {
             String object = cmd.split(classSymbol)[0];
             String command = cmd.split(classSymbol)[1].split("\\(")[0];
             String args = cmd.split("\\(")[1].replace(")", "");
-            result = executer.getValue(object, command, args, spiritname);
+            String[] args1 = {args};
+            result = executer.getValue(object, command, args1, spiritname);
         }
 
         return result;
