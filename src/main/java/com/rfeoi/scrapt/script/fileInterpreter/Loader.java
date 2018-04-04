@@ -103,7 +103,8 @@ public class Loader implements Executer, Listener {
     }
 
     @Override
-    public void execute(String spiritname, String command, String value, String executedSpirit) {
+    public void execute(String spiritname, String command, String[] args, String executedSpirit) {
+        String value = args[0];
         String spirit = null;
         if (spiritname.equalsIgnoreCase("this")) spirit = executedSpirit;
         else spirit = spiritname;
@@ -160,7 +161,8 @@ public class Loader implements Executer, Listener {
     }
 
     @Override
-    public String getValue(String spiritname, String command, String value, String executedSpirit) {
+    public String getValue(String spiritname, String command, String[] args, String executedSpirit) {
+        String value = args[0];
         String spirit = null;
         if (spiritname.equalsIgnoreCase("this")) spirit = executedSpirit;
         else spirit = spiritname;

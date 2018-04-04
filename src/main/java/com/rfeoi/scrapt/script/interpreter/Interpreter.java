@@ -1,5 +1,7 @@
 package com.rfeoi.scrapt.script.interpreter;
 
+import java.util.HashMap;
+
 public class Interpreter implements InterpreterChanger {
     public static final String classSymbol = ";";
     public static final String varSymbol = "$";
@@ -7,17 +9,20 @@ public class Interpreter implements InterpreterChanger {
     0: If it is in If
     1: If if condition is true
      */
+    protected Executer executer;
     private boolean[] var_if = {false, false};
+    protected HashMap<String, Command> commands;
 
-    public Interpreter(){
-
+    public Interpreter(Executer executer){
+        commands = new HashMap<>();
+        this.executer = executer;
     }
 
     public void interpret(String line){
         if (line.startsWith("//")) return;
         if (defaultTests(line)) return;
         if(line.contains("(")){
-
+            commands.put(line, new Command(line, executer));
         }else{
             System.err.println("'(' missing");
         }
@@ -37,15 +42,6 @@ public class Interpreter implements InterpreterChanger {
         return false;
     }
 
-    private boolean specialCommand(String line){
-        //TODO
-        return false;
-    }
-
-    private boolean normalCommand(String line){
-        //TODO
-        return false;
-    }
 
     @Override
     public void setIf(boolean inIf, boolean ifTrue) {

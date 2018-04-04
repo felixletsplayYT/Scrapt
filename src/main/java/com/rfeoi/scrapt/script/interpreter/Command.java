@@ -39,6 +39,14 @@ public class Command {
     public String getValue(String executedSpirit) {
         return executer.getValue(spirit, command, parseArgs(executedSpirit), executedSpirit);
     }
+    public void executeCommand(String executedSpirit){
+        if (!specialCommands())
+        executer.execute(spirit, command, parseArgs(executedSpirit), executedSpirit);
+    }
+    private boolean specialCommands(){
+        //TODO
+        return false;
+    }
 
     private String[] parseArgs(String executedSpirit) {
         ArrayList<String> parsed = new ArrayList<>();
@@ -53,11 +61,8 @@ public class Command {
         if ((request = getArimeticString(arg, executedSpirit)) != null) return request;
         if ((request = getVar(arg, executedSpirit)) != null) return request;
         if (arg.contains(Interpreter.classSymbol)) {
-            String object = arg.split(Interpreter.classSymbol)[0];
-            String command = arg.split(Interpreter.classSymbol)[1].split("\\(")[0];
-            //TODO...
-            // String args = arg.replace(object + Interpreter.classSymbol + command, "");
-            // return executer.getValue(object, command, args, executedSpirit);
+            //TODO make this do not create new Command instance each time
+            return new Command(arg, executer).getValue(executedSpirit);
         }
         return arg;
     }

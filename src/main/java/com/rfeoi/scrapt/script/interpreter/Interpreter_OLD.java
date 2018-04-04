@@ -14,12 +14,7 @@ public class Interpreter_OLD {
         lines = new ArrayList<>();
         this.executer = executer;
         this.spiritname = spiritName;
-        BufferedReader reader = new BufferedReader(new FileReader(file));
-        String line;
-        while ((line = reader.readLine()) != null) {
-            lines.add(line);
-        }
-        reader.close();
+
     }
 
     public void produce() {
