@@ -15,26 +15,29 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 
+//TODO MAKE NEW, MAKE BETTER
+@Deprecated
 public class Loader implements Executer, Listener {
 
     private String name = "";
     private WindowFrame windowFrame;
     private File folder;
-    private HashMap<String, ArrayList<Interpreter_OLD>> keyEvents;
+    private HashMap<String, HashMap<String, FileInterpreter>> keyEvents;
     private HashMap<String, String> globVariables;
-    private ArrayList<Interpreter_OLD> starter;
-    private HashMap<String, HashMap<String, Interpreter_OLD>> blocks;
+    private HashMap<String, FileInterpreter> starter;
+    private HashMap<String, HashMap<String, FileInterpreter>> blocks;
     private HashMap<String, HashMap<String, String>> privVars;
-    private ArrayList<Interpreter_OLD> mouseListener;
+    private HashMap<String, FileInterpreter> mouseListener;
     private ScraptFileParser parser;
+
 
     public Loader(File configFile) throws IOException {
         parser = new ScraptFileParser(configFile);
         this.folder = configFile.getParentFile();
         keyEvents = new HashMap<>();
         globVariables = new HashMap<>();
-        mouseListener = new ArrayList<>();
-        starter = new ArrayList<>();
+        mouseListener = new HashMap<>();
+        starter = new HashMap<>();
         blocks = new HashMap<>();
         privVars = new HashMap<>();
         loadConfigFile(configFile);
@@ -72,15 +75,15 @@ public class Loader implements Executer, Listener {
                         } else {
                             if (file1.getName().startsWith("keylistener_")) {
                                 String key = file1.getName().replace("keylistener_", "");
-                                addListener(key, new Interpreter_OLD(file1, this, file.getName()));
+                                addListener(key, new FileInterpreter(this), file.getName());
                             } else if (file1.getName().equalsIgnoreCase("start")) {
-                                starter.add(new Interpreter_OLD(file1, this, file.getName()));
+                                starter.put(file.getName(), new FileInterpreter(this));
                             } else if (file1.getName().equalsIgnoreCase("mouselistener")) {
-                                mouseListener.add(new Interpreter_OLD(file1, this, file.getName()));
+                                mouseListener.put(file.getName(), new FileInterpreter(this));
                             } else if (file1.getName().startsWith("block_")) {
                                 String blockname = file1.getName().replace("block_", "");
                                 blocks.computeIfAbsent(file.getName(), k -> new HashMap<>());
-                                blocks.get(file.getName()).put(blockname, new Interpreter_OLD(file1, this, file.getName()));
+                                blocks.get(file.getName()).put(blockname, new FileInterpreter(this));
                             }
                         }
                     }
@@ -97,9 +100,9 @@ public class Loader implements Executer, Listener {
         }
     }
 
-    private void addListener(String key, Interpreter_OLD interpreter) {
-        keyEvents.computeIfAbsent(key, k -> new ArrayList<>());
-        keyEvents.get(key).add(interpreter);
+    private void addListener(String key, FileInterpreter interpreter, String spirit) {
+        keyEvents.computeIfAbsent(key, k -> new HashMap<>());
+        keyEvents.get(key).put(spirit, interpreter);
     }
 
     @Override
@@ -149,15 +152,15 @@ public class Loader implements Executer, Listener {
             default:
                 if (blocks.get(spirit) != null) {
                     if (blocks.get(spirit).get(command) != null) {
-                        start(blocks.get(spirit).get(command));
+                        start(blocks.get(spirit).get(command), spirit);
                     }
                 }
                 break;
         }
     }
 
-    private void start(Interpreter_OLD interpreter) {
-        new Thread(() -> interpreter.produce()).start();
+    private void start(FileInterpreter interpreter, String spirit) {
+        new Thread(() -> interpreter.execute(spirit)).start();
     }
 
     @Override
@@ -209,8 +212,8 @@ public class Loader implements Executer, Listener {
     }
 
     private void startRoutine() {
-        for (int i = 0; i < starter.size(); i++) {
-            start(starter.get(i));
+        for (String spirit : starter.keySet()) {
+            start(starter.get(spirit), spirit);
         }
     }
 
@@ -222,8 +225,8 @@ public class Loader implements Executer, Listener {
     @Override
     public void mouseMoved(MouseEvent mouseEvent) {
         if (mouseListener.size() > 0) {
-            for (int i = 0; i < mouseListener.size(); i++) {
-                start(mouseListener.get(i));
+            for (String spirit : mouseListener.keySet()) {
+                start(mouseListener.get(spirit), spirit);
             }
         }
     }
@@ -262,7 +265,8 @@ public class Loader implements Executer, Listener {
     public void keyPressed(KeyEvent keyEvent) {
         if (keyEvents.get(keyEvent.getKeyCode() + "") == null) return;
         for (int i = 0; i < keyEvents.get(keyEvent.getKeyCode() + "").size(); i++) {
-            start(keyEvents.get(keyEvent.getKeyCode() + "").get(i));
+            String spirit = (String) keyEvents.get(keyEvent.getKeyCode() + "").keySet().toArray()[i];
+            start(keyEvents.get(keyEvent.getKeyCode() + "").get(spirit), spirit);
         }
     }
 
