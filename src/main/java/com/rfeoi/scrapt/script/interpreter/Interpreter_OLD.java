@@ -7,12 +7,12 @@ import java.util.ArrayList;
 public class Interpreter_OLD {
     private final String classSymbol = ";";
     private ArrayList<String> lines;
-    private Executer executer;
+    private Executor executor;
     private String spiritname;
 
-    public Interpreter_OLD(File file, Executer executer, String spiritName) throws IOException {
+    public Interpreter_OLD(File file, Executor executor, String spiritName) throws IOException {
         lines = new ArrayList<>();
-        this.executer = executer;
+        this.executor = executor;
         this.spiritname = spiritName;
 
     }
@@ -33,7 +33,7 @@ public class Interpreter_OLD {
                         args = args.substring(0, args.length() - 1);
                         if (args.contains(classSymbol)) args = getValue(args);
                         String[] args1 = {args};
-                        executer.execute(object, command, args1, spiritname);
+                        executor.execute(object, command, args1, spiritname);
                     } else {
                         if (s.contains("(")) {
                             String command = s.split("\\(")[0];
@@ -137,7 +137,7 @@ public class Interpreter_OLD {
             String command = cmd.split(classSymbol)[1].split("\\(")[0];
             String args = cmd.split("\\(")[1].replace(")", "");
             String[] args1 = {args};
-            result = executer.getValue(object, command, args1, spiritname);
+            result = executor.getValue(object, command, args1, spiritname);
         }
 
         return result;

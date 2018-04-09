@@ -3,8 +3,7 @@ package com.rfeoi.scrapt.script.fileInterpreter;
 import com.rfeoi.scrapt.API.Listener;
 import com.rfeoi.scrapt.API.frame.WindowFrame;
 import com.rfeoi.scrapt.API.objects.Spirit;
-import com.rfeoi.scrapt.script.interpreter.Executer;
-import com.rfeoi.scrapt.script.interpreter.Interpreter_OLD;
+import com.rfeoi.scrapt.script.interpreter.Executor;
 
 import java.awt.*;
 import java.awt.event.KeyEvent;
@@ -17,7 +16,7 @@ import java.util.HashMap;
 
 //TODO MAKE NEW, MAKE BETTER
 @Deprecated
-public class Loader implements Executer, Listener {
+public class Loader implements Executor, Listener {
 
     private String name = "";
     private WindowFrame windowFrame;

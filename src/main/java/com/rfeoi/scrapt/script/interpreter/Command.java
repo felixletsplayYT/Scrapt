@@ -5,20 +5,20 @@ import java.util.Arrays;
 
 
 public class Command {
-    private Executer executer;
+    private Executor executor;
     private String spirit;
     private String command;
     private String[] argsUnparsed;
 
-    public Command(String spirit, String command, String[] args, Executer executer) {
-        this.executer = executer;
+    public Command(String spirit, String command, String[] args, Executor executor) {
+        this.executor = executor;
         this.spirit = spirit;
         this.command = command;
         this.argsUnparsed = args;
     }
 
-    public Command(String string, Executer executer) {
-        this.executer = executer;
+    public Command(String string, Executor executor) {
+        this.executor = executor;
         if (string.split("\\(")[0].contains(Interpreter.classSymbol)) {
             spirit = string.split(Interpreter.classSymbol)[0];
         } else spirit = null;
@@ -37,11 +37,11 @@ public class Command {
     }
 
     public String getValue(String executedSpirit) {
-        return executer.getValue(spirit, command, parseArgs(executedSpirit), executedSpirit);
+        return executor.getValue(spirit, command, parseArgs(executedSpirit), executedSpirit);
     }
     public void executeCommand(String executedSpirit){
         if (!specialCommands())
-        executer.execute(spirit, command, parseArgs(executedSpirit), executedSpirit);
+        executor.execute(spirit, command, parseArgs(executedSpirit), executedSpirit);
     }
     private boolean specialCommands(){
         //TODO
@@ -62,7 +62,7 @@ public class Command {
         if ((request = getVar(arg, executedSpirit)) != null) return request;
         if (arg.contains(Interpreter.classSymbol)) {
             //TODO make this do not create new Command instance each time
-            return new Command(arg, executer).getValue(executedSpirit);
+            return new Command(arg, executor).getValue(executedSpirit);
         }
         return arg;
     }
@@ -96,10 +96,10 @@ public class Command {
         String side1;
         //TODO make this do not create new Command instance each time
         if (side0Raw.contains(Interpreter.classSymbol))
-            side0 = new Command(side0Raw, executer).getValue(executedSpirit);
+            side0 = new Command(side0Raw, executor).getValue(executedSpirit);
         else side0 = side0Raw;
         if (side1Raw.contains(Interpreter.classSymbol))
-            side1 = new Command(side1Raw, executer).getValue(executedSpirit);
+            side1 = new Command(side1Raw, executor).getValue(executedSpirit);
         else side1 = side1Raw;
         switch (arith) {
             case "-": {
@@ -129,14 +129,14 @@ public class Command {
         if (arg.startsWith("$")) {
             if (arg.contains(Interpreter.classSymbol)) {
                 if (arg.contains("=")) {
-                    executer.setPrivVar(arg.split("=")[0].split(Interpreter.classSymbol)[1].replaceFirst("$", ""), arg.split(Interpreter.classSymbol)[0], arg.split("=")[1]);
+                    executor.setPrivVar(arg.split("=")[0].split(Interpreter.classSymbol)[1].replaceFirst("$", ""), arg.split(Interpreter.classSymbol)[0], arg.split("=")[1]);
                 }
-                return executer.getPrivVar(arg.replaceFirst("$", ""), executedSpirit);
+                return executor.getPrivVar(arg.replaceFirst("$", ""), executedSpirit);
             } else {
                 if (arg.contains("=")) {
-                    executer.setGlobVar(arg.split("=")[0].replaceFirst("$", ""), arg.split("=")[1]);
+                    executor.setGlobVar(arg.split("=")[0].replaceFirst("$", ""), arg.split("=")[1]);
                 }
-                return executer.getGlobVar(arg.replaceFirst("$", ""));
+                return executor.getGlobVar(arg.replaceFirst("$", ""));
             }
         }
         return null;

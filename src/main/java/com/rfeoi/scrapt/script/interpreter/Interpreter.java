@@ -9,20 +9,20 @@ public class Interpreter implements InterpreterChanger {
     0: If it is in If
     1: If if condition is true
      */
-    protected Executer executer;
+    protected Executor executor;
     private boolean[] var_if = {false, false};
     protected HashMap<String, Command> commands;
 
-    public Interpreter(Executer executer){
+    public Interpreter(Executor executor){
         commands = new HashMap<>();
-        this.executer = executer;
+        this.executor = executor;
     }
 
     public void interpret(String line){
         if (line.startsWith("//")) return;
         if (defaultTests(line)) return;
         if(line.contains("(")){
-            commands.put(line, new Command(line, executer));
+            commands.put(line, new Command(line, executor));
         }else{
             System.err.println("'(' missing");
         }

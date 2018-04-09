@@ -1,6 +1,6 @@
 package com.rfeoi.scrapt.script.interpreter;
 
-public interface Executer {
+public interface Executor {
     void execute(String spiritname, String command, String[] args, String executedSpirit);
 
     String getValue(String spiritname, String command, String[] args, String executedSpirit);
