@@ -1,13 +1,17 @@
 package com.rfeoi.scrapt.script.scrapt;
 
+import com.rfeoi.scrapt.API.Listener;
 import com.rfeoi.scrapt.script.fileInterpreter.FileInterpreter;
 import com.rfeoi.scrapt.script.interpreter.Executor;
 
+import java.awt.*;
+import java.awt.event.KeyEvent;
+import java.awt.event.MouseEvent;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 
-public class ScraptLoader  {
+public class ScraptLoader implements Listener {
 
     //VARS
     private Executor executor;
@@ -16,9 +20,11 @@ public class ScraptLoader  {
     private HashMap<FileInterpreter, String> starter;
 
     public ScraptLoader(){
-        executor = new ScraptExecutor();
+        //TODO Load from File
+        executor = new ScraptExecutor(new Dimension(1000,1000), "Title", this);
         keyListener = new HashMap<>();
         mouseListener = new HashMap<>();
+        starter = new HashMap<>();
     }
     private void loadFiles(File directory){
         if (!directory.isDirectory()) return;
@@ -71,6 +77,65 @@ public class ScraptLoader  {
     }
 
     public void start(){
-        //TODO
+        for (FileInterpreter interpreter : starter.keySet()){
+            interpreter.execute(starter.get(interpreter));
+        }
+    }
+
+    @Override
+    public void mouseDragged(MouseEvent mouseEvent) {
+        for (FileInterpreter interpreter : mouseListener.keySet()){
+            interpreter.execute(mouseListener.get(interpreter));
+        }
+    }
+
+    @Override
+    public void mouseMoved(MouseEvent mouseEvent) {
+
+    }
+
+    @Override
+    public void mouseClicked(MouseEvent mouseEvent) {
+
+    }
+
+    @Override
+    public void mousePressed(MouseEvent mouseEvent) {
+
+    }
+
+    @Override
+    public void mouseReleased(MouseEvent mouseEvent) {
+
+    }
+
+    @Override
+    public void mouseEntered(MouseEvent mouseEvent) {
+
+    }
+
+    @Override
+    public void mouseExited(MouseEvent mouseEvent) {
+
+    }
+
+    @Override
+    public void keyTyped(KeyEvent keyEvent) {
+
+    }
+
+    @Override
+    public void keyPressed(KeyEvent keyEvent) {
+        if (keyListener.get(keyEvent.getKeyCode() + "") != null){
+            HashMap<FileInterpreter, String> interpreters = keyListener.get(keyEvent.getKeyCode() + "");
+            for (FileInterpreter interpreter : interpreters.keySet()){
+                interpreter.execute(interpreters.get(interpreter));
+            }
+        }
+    }
+
+    @Override
+    public void keyReleased(KeyEvent keyEvent) {
+
     }
 }
