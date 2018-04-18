@@ -26,7 +26,7 @@ public class ScraptLoader implements Listener {
         mouseListener = new HashMap<>();
         starter = new HashMap<>();
     }
-    private void loadFiles(File directory){
+    public void loadFiles(File directory){
         if (!directory.isDirectory()) return;
         for (File spirit : directory.listFiles()){
             if (!spirit.isDirectory()) break;
