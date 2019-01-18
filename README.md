@@ -1,3 +1,6 @@
+# This Project will not be maintanaced 
+If you wish to see just the java api feature go to https://github.com/strifel/ObjectsShow
+
 # Scrapt
 [![Build Status](https://travis-ci.org/rfeoi/Scrapt.svg?branch=master)](https://travis-ci.org/rfeoi/Scrapt)
 ## What is Scrapt?
